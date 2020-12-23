@@ -33,6 +33,7 @@ private:
 	Ui::MainWindow* ui_;
 
 	enum ReadError {FORMAT_ERROR, JSON_ERROR};
+	const int statusbar_message_duration = 3000;
 
 private slots:
 	void writeToSocket();

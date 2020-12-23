@@ -71,7 +71,7 @@ void MainWindow::readAndProcessReadyData()
 	/* Данные подходят для использования в модели. */
 	/* Дальнейшая валидация в коде модели. */
 	users_model_->setDataSource(json_data.array());
-	this->ui_->statusbar->showMessage("Данные успешно загружены.", 3000);
+	this->ui_->statusbar->showMessage("Данные успешно загружены.", statusbar_message_duration);
 }
 
 void MainWindow::enableReloadButton()
@@ -95,7 +95,7 @@ void MainWindow::socketErrorOccured(QAbstractSocket::SocketError socket_error)
 		enableReloadButton();
 	}
 	QMessageBox::critical(this, "Ошибка!", "При загрузке данных произошла ошибка:\n" + error_string);
-	this->ui_->statusbar->showMessage("Ошибка соединения.", 3000);
+	this->ui_->statusbar->showMessage("Ошибка соединения.", statusbar_message_duration);
 }
 
 void MainWindow::readErrorOccured(MainWindow::ReadError read_error)
@@ -111,7 +111,7 @@ void MainWindow::readErrorOccured(MainWindow::ReadError read_error)
 		break;
 	}
 	QMessageBox::critical(this, "Ошибка!", error_string);
-	this->ui_->statusbar->showMessage("Ошибка чтения.", 3000);
+	this->ui_->statusbar->showMessage("Ошибка чтения.", statusbar_message_duration);
 }
 
 
