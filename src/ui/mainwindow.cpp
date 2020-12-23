@@ -39,6 +39,7 @@ void MainWindow::connectSocket()
 void MainWindow::writeToSocket()
 {
 	ui_->pushButton_reload->setText("Отправка данных...");
+	/* HTTP 1.0 работает без шифрования. */
 	tcp_socket_->write("GET /users HTTP/1.0\nHOST: jsonplaceholder.typicode.com\n\n");
 }
 
@@ -46,8 +47,11 @@ void MainWindow::readAndProcessReadyData()
 {
 	ui_->pushButton_reload->setText("Получение данных...");
 
+	/* Сервер закрыл соединение, ответ можно читать полностью. */
 	QByteArray data;
 	data = tcp_socket_->readAll();
+	/* \r\n\r\n - двойной перевод строки в Windows. */
+	/* Отделяет http-заголовки ответа от содержимого. */
 	data = data.right(data.length() - (data.indexOf("\r\n\r\n") + 4));
 
 	QJsonParseError json_error;
@@ -61,6 +65,9 @@ void MainWindow::readAndProcessReadyData()
 		QMessageBox::critical(this, "Ошибка!", error_message);
 		this->ui_->statusbar->showMessage("Ошибка чтения.", 3000);
 	}
+	/* Парсер не нашёл ошибок в ответе. */
+	/* Данные подходят для использования в модели. */
+	/* Дальнейшая валидация не требуется. */
 	users_model_->setDataSource(json_data.array());
 	this->ui_->statusbar->showMessage("Данные успешно загружены.", 3000);
 }
@@ -76,6 +83,8 @@ void MainWindow::socketErrorOccured(QAbstractSocket::SocketError socketError)
 	QString error_string;
 	switch (socketError)
 	{
+	/* Сервер закрывает соединение после завершения передачи ответа. */
+	/* Если ответ получен не полностью, парсер выдаст ошибку. */
 	case QAbstractSocket::RemoteHostClosedError:
 		readAndProcessReadyData();
 		return;

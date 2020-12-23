@@ -21,6 +21,10 @@ public:
 	~MainWindow();
 
 public slots:
+	/**
+	 * @brief Connect socket to host, as per assignment.
+	 * @note host: "jsonplaceholder.typicode.com" port: 80
+	 */
 	void connectSocket();
 
 private:
