@@ -8,4 +8,4 @@ The rules for the representation of the source data are as follows:
 - Positive or neutral latitude is a green circle.
 - Negative latitude is a red circle.
 
-<img src="demo.png">
+<img src="screenshot.png">
