@@ -67,10 +67,13 @@ void MainWindow::readAndProcessReadyData()
 		readErrorOccured(JSON_ERROR);
 		return;
 	}
+	QJsonArray data_source;
+	if (json_data.isObject()) data_source = QJsonArray({json_data.object()});
+	else data_source = json_data.array();
 	/* Парсер не нашёл ошибок в ответе. */
 	/* Данные подходят для использования в модели. */
 	/* Дальнейшая валидация в коде модели. */
-	users_model_->setDataSource(json_data.array());
+	users_model_->setDataSource(data_source);
 	this->ui_->statusbar->showMessage("Данные успешно загружены.", statusbar_message_duration);
 }
 
