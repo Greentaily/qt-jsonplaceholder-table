@@ -40,7 +40,7 @@ void MainWindow::writeToSocket()
 {
 	ui_->pushButton_reload->setText("Отправка данных...");
 	/* HTTP 1.0 работает без шифрования. */
-	tcp_socket_->write("GET /users/2 HTTP/1.0\nHOST: jsonplaceholder.typicode.com\n\n");
+	tcp_socket_->write("GET /users HTTP/1.0\nHOST: jsonplaceholder.typicode.com\n\n");
 }
 
 void MainWindow::readAndProcessReadyData()
