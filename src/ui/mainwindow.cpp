@@ -40,7 +40,7 @@ void MainWindow::writeToSocket()
 {
 	ui_->pushButton_reload->setText("Отправка данных...");
 	/* HTTP 1.0 работает без шифрования. */
-	tcp_socket_->write("GET /users HTTP/1.0\nHOST: jsonplaceholder.typicode.com\n\n");
+	tcp_socket_->write("GET /users/2 HTTP/1.0\nHOST: jsonplaceholder.typicode.com\n\n");
 }
 
 void MainWindow::readAndProcessReadyData()
@@ -52,22 +52,24 @@ void MainWindow::readAndProcessReadyData()
 	data = tcp_socket_->readAll();
 	/* \r\n\r\n - двойной перевод строки в Windows. */
 	/* Отделяет http-заголовки ответа от содержимого. */
-	data = data.right(data.length() - (data.indexOf("\r\n\r\n") + 4));
+	int index_of_contents = data.indexOf("\r\n\r\n");
+	if (index_of_contents == -1)
+	{
+		readErrorOccured(FORMAT_ERROR);
+		return;
+	}
+	data = data.right(data.length() - (index_of_contents + 4));
 
 	QJsonParseError json_error;
 	QJsonDocument json_data = QJsonDocument::fromJson(data, &json_error);
 	if (json_error.error != QJsonParseError::NoError)
 	{
-		QString error_message = "При чтении полученных данных произошла ошибка:\n"
-								+ json_error.errorString()
-								+ "\n offset: "
-								+ json_error.offset;
-		QMessageBox::critical(this, "Ошибка!", error_message);
-		this->ui_->statusbar->showMessage("Ошибка чтения.", 3000);
+		readErrorOccured(JSON_ERROR);
+		return;
 	}
 	/* Парсер не нашёл ошибок в ответе. */
 	/* Данные подходят для использования в модели. */
-	/* Дальнейшая валидация не требуется. */
+	/* Дальнейшая валидация в коде модели. */
 	users_model_->setDataSource(json_data.array());
 	this->ui_->statusbar->showMessage("Данные успешно загружены.", 3000);
 }
@@ -78,10 +80,10 @@ void MainWindow::enableReloadButton()
 	ui_->pushButton_reload->setEnabled(true);
 }
 
-void MainWindow::socketErrorOccured(QAbstractSocket::SocketError socketError)
+void MainWindow::socketErrorOccured(QAbstractSocket::SocketError socket_error)
 {
 	QString error_string;
-	switch (socketError)
+	switch (socket_error)
 	{
 	/* Сервер закрывает соединение после завершения передачи ответа. */
 	/* Если ответ получен не полностью, парсер выдаст ошибку. */
@@ -90,7 +92,26 @@ void MainWindow::socketErrorOccured(QAbstractSocket::SocketError socketError)
 		return;
 	default:
 		error_string = tcp_socket_->errorString();
+		enableReloadButton();
 	}
 	QMessageBox::critical(this, "Ошибка!", "При загрузке данных произошла ошибка:\n" + error_string);
 	this->ui_->statusbar->showMessage("Ошибка соединения.", 3000);
 }
+
+void MainWindow::readErrorOccured(MainWindow::ReadError read_error)
+{
+	QString error_string;
+	switch (read_error)
+	{
+	case FORMAT_ERROR:
+		error_string = "Неверный формат полученного ответа.";
+		break;
+	case JSON_ERROR:
+		error_string = "При чтении полученных данных произошла ошибка.";
+		break;
+	}
+	QMessageBox::critical(this, "Ошибка!", error_string);
+	this->ui_->statusbar->showMessage("Ошибка чтения.", 3000);
+}
+
+

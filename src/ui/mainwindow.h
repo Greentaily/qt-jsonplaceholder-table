@@ -32,10 +32,13 @@ private:
 	UsersModel* users_model_;
 	Ui::MainWindow* ui_;
 
+	enum ReadError {FORMAT_ERROR, JSON_ERROR};
+
 private slots:
 	void writeToSocket();
 	void readAndProcessReadyData();
 	void enableReloadButton();
-	void socketErrorOccured(QAbstractSocket::SocketError socketError);
+	void socketErrorOccured(QAbstractSocket::SocketError socket_error);
+	void readErrorOccured(ReadError read_error);
 };
 #endif // MAINWINDOW_H
