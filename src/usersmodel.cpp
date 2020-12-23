@@ -2,11 +2,9 @@
 
 UsersModel::UsersModel(QObject *parent)
 	: QAbstractTableModel(parent)
-	, latitude_pixmap_green(new QPixmap(LATITUDE_ICON_SIZE))
-	, latitude_pixmap_red(new QPixmap(LATITUDE_ICON_SIZE))
+	, latitude_pixmap_green(createLatitudePixmap(Qt::green))
+	, latitude_pixmap_red(createLatitudePixmap(Qt::red))
 {
-	drawLatitudePixmap(latitude_pixmap_green, Qt::green);
-	drawLatitudePixmap(latitude_pixmap_red, Qt::red);
 }
 
 UsersModel::~UsersModel()
@@ -81,10 +79,12 @@ QVariant UsersModel::headerData(int section, Qt::Orientation orientation, int ro
 	return QVariant();
 }
 
-void UsersModel::drawLatitudePixmap(QPixmap* pixmap_ptr, QColor color)
+QPixmap* UsersModel::createLatitudePixmap(QColor color)
 {
+	QPixmap* pixmap_ptr = new QPixmap(LATITUDE_ICON_SIZE);
 	pixmap_ptr->fill(Qt::transparent);
 	QPainter painter(pixmap_ptr);
 	painter.setBrush(color);
 	painter.drawEllipse(0, 0, LATITUDE_ICON_SIZE.width()-1, LATITUDE_ICON_SIZE.height()-1);
+	return pixmap_ptr;
 }

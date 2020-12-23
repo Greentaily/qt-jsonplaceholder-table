@@ -75,10 +75,9 @@ private:
 	QPixmap* latitude_pixmap_green;
 	QPixmap* latitude_pixmap_red;
 
-	/* Draws pixmap corresponding to an invariant icon type
-	 * then fills it with specified color. */
+	/* Creates and draws pixmap then fills it with specified color. */
 	/* Modify this method to change the shape of the icons. */
-	void drawLatitudePixmap(QPixmap* pixmap_ptr, QColor color);
+	QPixmap* createLatitudePixmap(QColor color);
 };
 
 #endif // USERSMODEL_H
