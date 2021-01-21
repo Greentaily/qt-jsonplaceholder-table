@@ -1,5 +1,5 @@
-# This application
-This simple application fetches JSON user data from jsonplaceholder.typicode.com via QTcpSocket to display it in a specific way inside QTableView widget.
+# qt-jsonplaceholder-table
+This simple application will fetch JSON user data from jsonplaceholder.typicode.com via QTcpSocket to display it in a specific way inside QTableView widget.
 
 The rules for the representation of the source data are as follows:
 - Only two fields from the source data are displayed: name and address->geo->latitude.
